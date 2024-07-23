@@ -20,12 +20,10 @@ output:
 linters:
   enable:
     - errcheck
-    - govet
     - gocyclo
     - gofmt
     - goimports
     - ineffassign
-    - megacheck
     - nakedret
     - staticcheck
     - typecheck

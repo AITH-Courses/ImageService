@@ -13,6 +13,7 @@ import (
 
 	config "image_service/internal/config"
 	handlers "image_service/internal/handlers"
+	web "image_service/internal/web"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 		fmt.Printf("%v", loadConfigError)
 		return
 	}
-	imageRepo, createRepoError := repositories.NewMinioImageRepository(context.Background(), config.MinioHost, config.MinioPort, config.MinioRootUser, config.MinioRootPassword, config.MinioBucketName, config.MinioUseSSL)
+	imageRepo, createRepoError := repositories.NewMinioImageRepository(context.Background(), config.MinioHost, config.MinioPort, config.MinioRootUser, config.MinioRootPassword, config.MinioBucketName, config.MinioUseSSL, config.ImageEndpointPrefix)
 	if createRepoError != nil {
 		fmt.Printf("%v", createRepoError)
 		return
@@ -29,7 +30,11 @@ func main() {
 	imageService := services.NewImageService(imageRepo)
 	imageHandler := handlers.NewImageHandler(imageService)
 	router := mux.NewRouter()
-	router.HandleFunc("/image", imageHandler.AddImage).
+	router.HandleFunc("/admin/images", imageHandler.AddImage).
 		Methods("POST")
+
+	cors := web.NewCORS(config.AllowedOrigins)
+	router.Use(cors.Handler)
+
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

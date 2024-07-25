@@ -9,12 +9,14 @@ import (
 )
 
 type Config struct {
-	MinioHost         string
-	MinioPort         string
-	MinioBucketName   string
-	MinioRootUser     string
-	MinioRootPassword string
-	MinioUseSSL       bool
+	MinioHost           string
+	MinioPort           string
+	MinioBucketName     string
+	MinioRootUser       string
+	MinioRootPassword   string
+	MinioUseSSL         bool
+	AllowedOrigins      string
+	ImageEndpointPrefix string // http://images.aithc.com или http://localhost:9000 или пустая строка для nginx
 }
 
 func LoadConfig() (*Config, error) {
@@ -46,13 +48,23 @@ func LoadConfig() (*Config, error) {
 	if envError != nil {
 		return nil, envError
 	}
+	allowedOrigins, envError := getEnv("ALLOWED_ORIGINS")
+	if envError != nil {
+		return nil, envError
+	}
+	imageEndpointPrefix, envError := getEnv("IMAGE_ENDPOINT_PREFIX")
+	if envError != nil {
+		return nil, envError
+	}
 	config := &Config{
-		MinioHost:         minioHost,
-		MinioPort:         minioPort,
-		MinioBucketName:   minioBucketName,
-		MinioRootUser:     minioRootUser,
-		MinioRootPassword: minioRootPassword,
-		MinioUseSSL:       minioUseSSL,
+		MinioHost:           minioHost,
+		MinioPort:           minioPort,
+		MinioBucketName:     minioBucketName,
+		MinioRootUser:       minioRootUser,
+		MinioRootPassword:   minioRootPassword,
+		MinioUseSSL:         minioUseSSL,
+		AllowedOrigins:      allowedOrigins,
+		ImageEndpointPrefix: imageEndpointPrefix,
 	}
 	return config, nil
 }

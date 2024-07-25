@@ -10,8 +10,9 @@ import (
 )
 
 type MinioImageRepository struct {
-	client     *minio.Client
-	bucketName string
+	imageEndpointPrefix string
+	client              *minio.Client
+	bucketName          string
 }
 
 func (repo *MinioImageRepository) AddOne(filename string, fileSize int64, reader io.Reader) (string, error) {
@@ -22,7 +23,7 @@ func (repo *MinioImageRepository) AddOne(filename string, fileSize int64, reader
 	if putObjectError != nil {
 		return "", putObjectError
 	}
-	pathToFile := repo.bucketName + "/" + filename
+	pathToFile := repo.imageEndpointPrefix + "/" + repo.bucketName + "/" + filename
 	return pathToFile, nil
 }
 
@@ -57,7 +58,7 @@ func createBucket(ctx context.Context, client *minio.Client, bucketName string) 
 	return nil
 }
 
-func NewMinioImageRepository(ctx context.Context, host, port, user, password, bucketName string, useSSL bool) (*MinioImageRepository, error) {
+func NewMinioImageRepository(ctx context.Context, host, port, user, password, bucketName string, useSSL bool, imageEndpointPrefix string) (*MinioImageRepository, error) {
 	endpoint := host + ":" + port
 	client, getMinioClientError := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(user, password, ""),
@@ -71,8 +72,9 @@ func NewMinioImageRepository(ctx context.Context, host, port, user, password, bu
 		return nil, createBucketError
 	}
 	repo := &MinioImageRepository{
-		client:     client,
-		bucketName: bucketName,
+		imageEndpointPrefix: imageEndpointPrefix,
+		client:              client,
+		bucketName:          bucketName,
 	}
 	return repo, nil
 }

@@ -17,3 +17,8 @@ go run cmd/main.go
 ```bash
 golangci-lint run
 ```
+
+### Форматтеры
+```bash
+gofmt -s -w .
+```

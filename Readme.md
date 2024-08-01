@@ -8,11 +8,6 @@
 docker-compose -f dev.docker-compose.yaml up -d
 ```
 
-### Запуск приложения
-```bash
-go run cmd/main.go
-```
-
 ### Линтеры
 ```bash
 golangci-lint run

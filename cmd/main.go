@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -22,7 +21,7 @@ func main() {
 		fmt.Printf("%v", loadConfigError)
 		return
 	}
-	imageRepo, createRepoError := repositories.NewMinioImageRepository(context.Background(), config.MinioHost, config.MinioPort, config.MinioRootUser, config.MinioRootPassword, config.MinioBucketName, config.MinioUseSSL, config.ImageEndpointPrefix)
+	imageRepo, createRepoError := repositories.NewMinioImageRepository(config.MinioHost, config.MinioPort, config.MinioRootUser, config.MinioRootPassword, config.MinioBucketName, config.MinioUseSSL, config.ImageEndpointPrefix)
 	if createRepoError != nil {
 		fmt.Printf("%v", createRepoError)
 		return

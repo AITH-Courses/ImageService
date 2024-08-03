@@ -29,12 +29,15 @@ func main() {
 	}
 	imageService := services.NewImageService(imageRepo)
 	imageHandler := handlers.NewImageHandler(imageService)
+	healthCheckHandler := handlers.NewHealtchCheckHandler()
 	router := mux.NewRouter()
 	router.HandleFunc("/admin/images", imageHandler.AddImage).
 		Methods("POST")
+	router.HandleFunc("/health", healthCheckHandler.GetHealth).
+		Methods("GET")
 
 	cors := web.NewCORS(config.AllowedOrigins)
 	router.Use(cors.Handler)
-
+	log.Print("Server is starting...")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

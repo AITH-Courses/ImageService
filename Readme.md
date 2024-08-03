@@ -7,6 +7,14 @@
 ```bash
 docker-compose -f dev.docker-compose.yaml up -d
 ```
+### Перезапуск сервиса
+```bash
+docker-compose -f dev.docker-compose.yaml restart image_service
+```
+### Пересборка сервиса (если изменился состав библиотек)
+```bash
+docker-compose -f dev.docker-compose.yaml build
+```
 
 ### Линтеры
 ```bash

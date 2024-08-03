@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -20,10 +18,10 @@ type Config struct {
 }
 
 func LoadConfig() (*Config, error) {
-	loadConfigError := godotenv.Load()
+	/*loadConfigError := godotenv.Load()
 	if loadConfigError != nil {
 		return nil, loadConfigError
-	}
+	}*/
 	minioHost, envError := getEnv("MINIO_HOST")
 	if envError != nil {
 		return nil, envError

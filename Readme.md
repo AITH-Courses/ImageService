@@ -7,10 +7,13 @@
 ```bash
 docker-compose -f dev.docker-compose.yaml up -d
 ```
-
-### Запуск приложения
+### Перезапуск сервиса
 ```bash
-go run cmd/main.go
+docker-compose -f dev.docker-compose.yaml restart image_service
+```
+### Пересборка сервиса (если изменился состав библиотек)
+```bash
+docker-compose -f dev.docker-compose.yaml build
 ```
 
 ### Линтеры

@@ -1,6 +1,24 @@
 version: '3'
 
 services:
+  image_service:
+    container_name: image_service
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    command: go run cmd/main.go
+    env_file:
+      - ".dev.env"
+    environment:
+      MINIO_HOST: minio # переопределяем, потому что находимся в сети Docker
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    volumes:
+      - ./:/app
+    depends_on:
+      - minio
+
   minio:
     container_name: minio
     image: bitnami/minio:latest

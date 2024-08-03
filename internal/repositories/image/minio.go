@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"path"
+	"time"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -17,7 +18,9 @@ type MinioImageRepository struct {
 
 func (repo *MinioImageRepository) AddOne(filename string, fileSize int64, reader io.Reader) (string, error) {
 	contentType := "image/" + path.Ext(filename)
-	_, putObjectError := repo.client.PutObject(context.Background(), repo.bucketName, filename, reader, fileSize, minio.PutObjectOptions{
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second) // таймаут 1 секунда для добавления файла
+	defer cancel()
+	_, putObjectError := repo.client.PutObject(ctx, repo.bucketName, filename, reader, fileSize, minio.PutObjectOptions{
 		ContentType: contentType,
 	})
 	if putObjectError != nil {
@@ -27,7 +30,9 @@ func (repo *MinioImageRepository) AddOne(filename string, fileSize int64, reader
 	return pathToFile, nil
 }
 
-func createBucket(ctx context.Context, client *minio.Client, bucketName string) error {
+func createBucket(client *minio.Client, bucketName string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second) // таймаут 3 секунды на все действия
+	defer cancel()
 	bucketExists, bucketExistsError := client.BucketExists(ctx, bucketName)
 	if bucketExistsError != nil {
 		return bucketExistsError
@@ -58,7 +63,7 @@ func createBucket(ctx context.Context, client *minio.Client, bucketName string) 
 	return nil
 }
 
-func NewMinioImageRepository(ctx context.Context, host, port, user, password, bucketName string, useSSL bool, imageEndpointPrefix string) (*MinioImageRepository, error) {
+func NewMinioImageRepository(host, port, user, password, bucketName string, useSSL bool, imageEndpointPrefix string) (*MinioImageRepository, error) {
 	endpoint := host + ":" + port
 	client, getMinioClientError := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(user, password, ""),
@@ -67,7 +72,7 @@ func NewMinioImageRepository(ctx context.Context, host, port, user, password, bu
 	if getMinioClientError != nil {
 		return nil, getMinioClientError
 	}
-	createBucketError := createBucket(ctx, client, bucketName)
+	createBucketError := createBucket(client, bucketName)
 	if createBucketError != nil {
 		return nil, createBucketError
 	}

@@ -1,4 +1,4 @@
-FROM golang:1.22.1 AS build
+FROM golang:1.22-alpine AS build
 WORKDIR /app
 COPY go.mod go.sum .
 RUN go mod download
@@ -7,8 +7,8 @@ COPY internal /app/internal
 RUN go build -o main cmd/main.go
 
 FROM alpine:latest
-RUN apk --no-cache add ca-certificates
 WORKDIR /app
+RUN apk --no-cache add ca-certificates
 COPY --from=build /app/main .
 EXPOSE 8080
 CMD ["./main"]

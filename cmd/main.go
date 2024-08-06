@@ -30,9 +30,9 @@ func main() {
 	imageHandler := handlers.NewImageHandler(imageService)
 	healthCheckHandler := handlers.NewHealtchCheckHandler()
 	router := mux.NewRouter()
-	router.HandleFunc("/admin/images", imageHandler.AddImage).
+	router.HandleFunc("/api/v1/admin/images", imageHandler.AddImage).
 		Methods("POST")
-	router.HandleFunc("/health", healthCheckHandler.GetHealth).
+	router.HandleFunc("/api/v1/health", healthCheckHandler.GetHealth).
 		Methods("GET")
 
 	cors := web.NewCORS(config.AllowedOrigins)

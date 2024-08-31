@@ -14,6 +14,7 @@ type ImageHandler struct {
 }
 
 func (ih *ImageHandler) AddImage(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Handling %s %s", r.Method, r.URL)
 	file, header, checkFileError := r.FormFile("file")
 	if checkFileError != nil {
 		w.WriteHeader(http.StatusInternalServerError)

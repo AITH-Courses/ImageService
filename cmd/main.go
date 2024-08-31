@@ -32,6 +32,8 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/v1/admin/images", imageHandler.AddImage).
 		Methods("POST")
+	router.HandleFunc("/api/v1/talent/images", imageHandler.AddImage).
+		Methods("POST")
 	router.HandleFunc("/api/v1/health", healthCheckHandler.GetHealth).
 		Methods("GET")
 
